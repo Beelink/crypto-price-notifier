@@ -25,14 +25,19 @@ yarn start
 ##### Managing pairs:
 
 `/setpair` - add or change pair
+
 `/deletepair` - delete pair
 
 ##### Managing alerts:
 
 `/setalertpriceupper` - set alert price upper
+
 `/setalertpricelower` - set alert price lower
+
 `/setcheckperiod`- set how often to check price
+
 `/setspamperiod` - set how ofter to send alert messages
+Ï
 `/stopspam` - stop alerting
 
 ### Possible improvements:
