@@ -1,7 +1,10 @@
 {
   "name": "crypto-price-notifier",
   "version": "2.0.0",
-  "main": "index.js",
+  "author": "Eugene Volynko <volynko.ua@gmail.com>",
+  "scripts": {
+    "start": "npx ts-node ./src/index.ts"
+  },
   "license": "MIT",
   "devDependencies": {
     "@types/node": "^22.7.9",
@@ -12,8 +15,5 @@
     "dotenv": "^16.4.5",
     "mexc-api-sdk": "^1.0.3",
     "node-telegram-bot-api": "^0.66.0"
-  },
-  "scripts": {
-    "start": "npx ts-node ./src/index.ts"
   }
 }

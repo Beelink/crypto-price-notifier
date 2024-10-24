@@ -1,6 +1,6 @@
 import { EBotCommand } from "./types";
 
-export const defaultPair = "ALEOUSDT";
+export const defaultPair = "ETHUSDT";
 export const defaultAlertPriceUpper = 99999999;
 export const defaultAlertPriceLower = 0;
 export const defaultCheckPeriod = 0;
