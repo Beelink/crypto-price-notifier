@@ -24,7 +24,7 @@ export const botCommands = [
   },
   {
     command: EBotCommand.setpair,
-    description: "set pair",
+    description: "add or change pair",
   },
   {
     command: EBotCommand.setalertpriceupper,
