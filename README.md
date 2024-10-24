@@ -2,6 +2,10 @@
 
 Telegram bot for crypto price monitoring. Built on top of the `node-telegram-bot-api`
 
+### How it works?
+
+Use `/setpair` to set a token pair to watch (the `ALEO_USDT` pair is set by default). Change the upper or lower alert price using `/setalertpriceupper` or `/setalertpricelower` or both. Set the check and spam periods using `/setcheckperiod` and `/setspamperiod`. 5 minutes is optimal for checking, and 10 seconds is optimal for spamming. If the token price is lower than `alert price lower` or the token price is bigger than `alert price upper` you are going to be spammed every 10 seconds with a new message from the bot. You can prevent the bot from spamming using the `/stopspam` command until the new price is fetched.
+
 ### Price providers:
 
 - MEXC using `mexc-api-sdk`
@@ -22,13 +26,13 @@ yarn start
 
 `/status` - get current pair info
 
-##### Managing pairs:
+##### Manage pairs:
 
 `/setpair` - add or change pair
 
 `/deletepair` - delete pair
 
-##### Managing alerts:
+##### Manage alerts:
 
 `/setalertpriceupper` - set alert price upper
 
@@ -37,7 +41,7 @@ yarn start
 `/setcheckperiod`- set how often to check price
 
 `/setspamperiod` - set how ofter to send alert messages
-Ï
+
 `/stopspam` - stop alerting
 
 ### Possible improvements:
