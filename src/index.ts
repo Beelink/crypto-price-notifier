@@ -37,14 +37,19 @@ fs.readFile(usersFile, (err, data) => {
 
     users.map((user) => {
       user.pairs.map((pair) => {
-        pair.checkInterval = setInterval(
-          () => checkLoop(user.chatId, pair),
-          pair.checkPeriod * 60000
-        ); // minutes
-        pair.spamInterval = setInterval(
-          () => spamLoop(user.chatId, pair),
-          pair.spamPeriod * 1000
-        ); // seconds
+        if (pair.checkPeriod) {
+          pair.checkInterval = setInterval(
+            () => checkLoop(user.chatId, pair),
+            pair.checkPeriod * 60000
+          ); // minutes
+        }
+
+        if (pair.spamPeriod) {
+          pair.spamInterval = setInterval(
+            () => spamLoop(user.chatId, pair),
+            pair.spamPeriod * 1000
+          ); // seconds
+        }
       });
     });
   }
@@ -338,14 +343,14 @@ const spamLoop = (chatId: number, pair: IPairSettings) => {
     if (pair.detectedPrice < pair.alertPriceLower) {
       bot.sendMessage(
         chatId,
-        `PRICE IS LOWER THEN ${pair.alertPriceLower} ! last detected price = ${pair.detectedPrice}`
+        `PRICE IS LOWER THEN ${pair.alertPriceLower} ! last checked price = ${pair.detectedPrice}`
       );
     }
 
     if (pair.detectedPrice > pair.alertPriceUpper) {
       bot.sendMessage(
         chatId,
-        `PRICE IS BIGGER THEN ${pair.alertPriceUpper} ! last detected price = ${pair.detectedPrice}`
+        `PRICE IS BIGGER THEN ${pair.alertPriceUpper} ! last fetched price = ${pair.detectedPrice}`
       );
     }
   }

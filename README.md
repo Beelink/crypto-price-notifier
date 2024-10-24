@@ -19,3 +19,4 @@ yarn start
 1. Add option to send message on price check
 2. Validation for user input
 3. Add ability to change price provider (it is only MEXC for now)
+4. Add error handlers for token price fetching
