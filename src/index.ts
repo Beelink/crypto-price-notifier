@@ -12,10 +12,12 @@ import {
 } from "./constants";
 import { getUser, getUserCurrentPair, setCurrentPair } from "./user";
 import { formatPairStatus } from "./util";
+import fs from "fs";
 
 dotenv.config();
 
 const botToken = process.env.TELEGRAM_BOT_TOKEN || "";
+const usersFile = "users.json";
 
 if (!botToken) {
   console.log(
@@ -26,7 +28,26 @@ if (!botToken) {
 const client = new Mexc.Spot();
 const bot = new tgBot(botToken, { polling: true });
 
-const users: IUsers = [];
+let users: IUsers = [];
+
+fs.readFile(usersFile, (err, data) => {
+  if (!err) {
+    users = JSON.parse(data.toString());
+
+    users.map((user) => {
+      user.pairs.map((pair) => {
+        pair.checkInterval = setInterval(
+          () => checkLoop(user.chatId, pair),
+          pair.checkPeriod * 60000
+        ); // minutes
+        pair.spamInterval = setInterval(
+          () => spamLoop(user.chatId, pair),
+          pair.spamPeriod * 1000
+        ); // seconds
+      });
+    });
+  }
+});
 
 bot.setMyCommands(botCommands);
 
@@ -43,7 +64,7 @@ const sendPairStatus = (chatId: number) => {
 ${formatPairStatus(currentPair)}
 
 your pairs = ${pairList}
-use /${EBotCommand.setpair} to switch between pairs`
+use /${EBotCommand.setpair} to switch between pairs or to add a new pair`
   );
 };
 
@@ -67,7 +88,9 @@ const setPairEnd = (chatId: number, text?: string) => {
   const user = getUser(users, chatId);
   user.whatToExpect = EWhatToExpect.command;
 
-  const newValue = text || defaultPair;
+  const newValue = (text || defaultPair)
+    .replace(/[^a-zA-Z]/g, "")
+    .toUpperCase();
 
   bot.sendMessage(chatId, `pair changed: ${user.currentPair} -> ${newValue}`);
 
@@ -219,21 +242,27 @@ const deletePairEnd = (chatId: number, text?: string) => {
   const user = getUser(users, chatId);
   user.whatToExpect = EWhatToExpect.command;
 
-  const deleteValue = text || "";
+  const deleteValue = (text || "").replace(/[^a-zA-Z]/g, "").toUpperCase();
+
+  const pairsLengthBeforeDeleting = user.pairs.length;
 
   if (user.pairs.find((p) => p.pair)) {
     user.pairs = user.pairs.filter((p) => p.pair !== deleteValue);
   }
 
-  bot.sendMessage(chatId, `pair deleted: ${deleteValue}`);
+  if (pairsLengthBeforeDeleting === user.pairs.length) {
+    bot.sendMessage(chatId, `pair not found: ${deleteValue}`);
+  } else {
+    bot.sendMessage(chatId, `pair deleted: ${deleteValue}`);
 
-  if (deleteValue === user.currentPair) {
-    setCurrentPair(user, user.pairs[0].pair);
+    if (deleteValue === user.currentPair) {
+      setCurrentPair(user, user.pairs[0].pair);
 
-    bot.sendMessage(
-      chatId,
-      `pair changed: ${user.currentPair} -> ${user.pairs[0].pair}`
-    );
+      bot.sendMessage(
+        chatId,
+        `pair changed: ${deleteValue} -> ${user.pairs[0].pair}`
+      );
+    }
   }
 };
 
@@ -331,3 +360,20 @@ const spamLoop = (chatId: number, pair: IPairSettings) => {
 };
 
 console.log("started!");
+
+setInterval(() => {
+  fs.writeFile(
+    usersFile,
+    JSON.stringify(
+      users.map((user) => ({
+        ...user,
+        pairs: user.pairs.map((pair) => ({
+          ...pair,
+          checkInterval: null,
+          spamInterval: null,
+        })),
+      }))
+    ),
+    () => {}
+  );
+}, 1000);
