@@ -19,12 +19,8 @@ export const defaultPairSettings = {
 
 export const botCommands = [
   {
-    command: EBotCommand.pairstatus,
+    command: EBotCommand.status,
     description: "get current pair info",
-  },
-  {
-    command: EBotCommand.listpairs,
-    description: "list all pairs info",
   },
   {
     command: EBotCommand.setpair,

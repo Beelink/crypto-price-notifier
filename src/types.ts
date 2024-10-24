@@ -9,8 +9,7 @@ export enum EWhatToExpect {
 }
 
 export enum EBotCommand {
-  pairstatus = "pairstatus",
-  listpairs = "listpairs",
+  status = "status",
   setalertpriceupper = "setalertpriceupper",
   setalertpricelower = "setalertpricelower",
   setpair = "setpair",

@@ -18,6 +18,7 @@ dotenv.config();
 
 const botToken = process.env.TELEGRAM_BOT_TOKEN || "";
 const usersFile = "users.json";
+const version = "2.0";
 
 if (!botToken) {
   console.log(
@@ -55,25 +56,19 @@ const sendPairStatus = (chatId: number) => {
   const user = getUser(users, chatId);
   const currentPair = getUserCurrentPair(user);
 
-  const pairList = user.pairs.map((p) => p.pair).join(" | ");
+  const message = user.pairs.map((p) => formatPairStatus(p)).join("\n\n");
 
   bot.sendMessage(
     chatId,
-    `current pair = ${currentPair.pair}
+    `v${version}
 
-${formatPairStatus(currentPair)}
+your pairs:
 
-your pairs = ${pairList}
+${message}
+
+current pair = ${currentPair.pair}
 use /${EBotCommand.setpair} to switch between pairs or to add a new pair`
   );
-};
-
-const listPairs = (chatId: number) => {
-  const user = getUser(users, chatId);
-
-  const message = user.pairs.map((p) => formatPairStatus(p)).join("\n\n");
-
-  bot.sendMessage(chatId, message);
 };
 
 // set pair
@@ -272,11 +267,8 @@ bot.on("message", (msg) => {
 
   if (user.whatToExpect === "command") {
     switch (msg.text) {
-      case `/${EBotCommand.pairstatus}`:
+      case `/${EBotCommand.status}`:
         sendPairStatus(user.chatId);
-        break;
-      case `/${EBotCommand.listpairs}`:
-        listPairs(user.chatId);
         break;
       case `/${EBotCommand.setpair}`:
         setPairStart(user.chatId);
